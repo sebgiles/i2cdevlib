@@ -36,7 +36,7 @@ THE SOFTWARE.
 // I2Cdev and MPU9150 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
-#include "MPU9150.h"
+#include "mpu.h"
 #include "helper_3dmath.h"
 
 // class default I2C address is 0x68
