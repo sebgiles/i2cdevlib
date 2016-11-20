@@ -1730,6 +1730,17 @@ void MPU9150::getMotion9(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx, int
     *my = (((int16_t)buffer[2]) << 8) | buffer[3];
     *mz = (((int16_t)buffer[4]) << 8) | buffer[5];
 }
+
+void MPU9150::getMag(int16_t* mx, int16_t* my, int16_t* mz) {
+    //I2Cdev::writeByte(devAddr, MPU9150_RA_INT_PIN_CFG, 0x02); //set i2c bypass enable pin to true to access magnetometer
+    //delay(10);
+    //I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x01); //enable the magnetometer
+    //delay(10);
+    I2Cdev::readBytes(MPU9150_RA_MAG_ADDRESS, MPU9150_RA_MAG_XOUT_L, 6, buffer);
+    *mx = (((int16_t)buffer[0]) << 8) | buffer[1];
+    *my = (((int16_t)buffer[2]) << 8) | buffer[3];
+    *mz = (((int16_t)buffer[4]) << 8) | buffer[5];
+}
 /** Get raw 6-axis motion sensor readings (accel/gyro).
  * Retrieves all currently available motion sensor values.
  * @param ax 16-bit signed integer container for accelerometer X-axis value

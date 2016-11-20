@@ -386,9 +386,8 @@ uint8_t MPU9150::dmpInitialize() {
     I2Cdev::writeByte(devAddr, MPU9150_RA_INT_PIN_CFG, 0x32);
 
     // enable MPU AUX I2C bypass mode
-    //DEBUG_PRINTLN(F("Enabling AUX I2C bypass mode..."));
-    //setI2CBypassEnabled(true);
-/* DONT TOUCH MY MAG!!!!!!!!!!!!!!!!!!!!!!!
+    DEBUG_PRINTLN(F("Enabling AUX I2C bypass mode..."));
+    setI2CBypassEnabled(true);
     DEBUG_PRINTLN(F("Setting magnetometer mode to power-down..."));
     //mag -> setMode(0);
     I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x00);
@@ -414,7 +413,7 @@ uint8_t MPU9150::dmpInitialize() {
     DEBUG_PRINTLN(F("Setting magnetometer mode to power-down..."));
     //mag -> setMode(0);
     I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x00);
-*/
+
     // load DMP code into memory banks
     DEBUG_PRINT(F("Writing DMP code to MPU memory banks ("));
     DEBUG_PRINT(MPU9150_DMP_CODE_SIZE);
@@ -512,40 +511,40 @@ uint8_t MPU9150::dmpInitialize() {
 
             DEBUG_PRINTLN(F("Setting zero-motion detection duration to 0..."));
             setZeroMotionDetectionDuration(0);
-/* DONT TOUCH THE MAG
+
             DEBUG_PRINTLN(F("Setting AK8975 to single measurement mode..."));
             //mag -> setMode(1);
-            I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x01);
+      //      I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x01);
 
             // setup AK8975 (MPU9150_RA_MAG_ADDRESS) as Slave 0 in read mode
-            DEBUG_PRINTLN(F("Setting up AK8975 read slave 0..."));*/
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_ADDR, 0x8E);
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_REG,  0x01);
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_CTRL, 0xDA);
+            DEBUG_PRINTLN(F("Setting up AK8975 read slave 0..."));
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_ADDR, 0x8E);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_REG,  0x01);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_CTRL, 0xDA);
 
-            // setup AK8975 (MPU9150_RA_MAG_ADDRESS) as Slave 2 in write mode NOPE!
+            // setup AK8975 (MPU9150_RA_MAG_ADDRESS) as Slave 2 in write mode
             DEBUG_PRINTLN(F("Setting up AK8975 write slave 2..."));
-          //  I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_ADDR, MPU9150_RA_MAG_ADDRESS);
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_REG,  0x0A);
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_CTRL, 0x81);
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_DO,   0x01);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_ADDR, MPU9150_RA_MAG_ADDRESS);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_REG,  0x0A);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_CTRL, 0x81);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_DO,   0x01);
 
             // setup I2C timing/delay control
             DEBUG_PRINTLN(F("Setting up slave access delay..."));
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV4_CTRL, 0x18);
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_MST_DELAY_CTRL, 0x05);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV4_CTRL, 0x18);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_I2C_MST_DELAY_CTRL, 0x05);
 
             // enable interrupts
             DEBUG_PRINTLN(F("Enabling default interrupt behavior/no bypass..."));
-            I2Cdev::writeByte(0x68, MPU9150_RA_INT_PIN_CFG, 0x00);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_INT_PIN_CFG, 0x00);
 
             // enable I2C master mode and reset DMP/FIFO
             DEBUG_PRINTLN(F("Enabling I2C master mode..."));
-            I2Cdev::writeByte(0x68, MPU9150_RA_USER_CTRL, 0x20);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_USER_CTRL, 0x20);
             DEBUG_PRINTLN(F("Resetting FIFO..."));
             I2Cdev::writeByte(0x68, MPU9150_RA_USER_CTRL, 0x24);
             DEBUG_PRINTLN(F("Rewriting I2C master mode enabled because...I don't know"));
-            I2Cdev::writeByte(0x68, MPU9150_RA_USER_CTRL, 0x20);
+      //      I2Cdev::writeByte(0x68, MPU9150_RA_USER_CTRL, 0x20);
             DEBUG_PRINTLN(F("Enabling and resetting DMP/FIFO..."));
             I2Cdev::writeByte(0x68, MPU9150_RA_USER_CTRL, 0xE8);
 
