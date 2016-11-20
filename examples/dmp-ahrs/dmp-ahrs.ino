@@ -45,7 +45,6 @@ THE SOFTWARE.
 // I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
-#include "mpu.h"
 #include "dmp.h"
 
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
@@ -116,7 +115,6 @@ MPU9150 mpu;
 // format used for the InvenSense teapot demo
 //#define OUTPUT_TEAPOT
 
-#define OUTPUT_RAW_ACCEL
 
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 bool blinkState = false;
@@ -132,6 +130,7 @@ uint8_t fifoBuffer[64]; // FIFO storage buffer
 // orientation/motion vars
 Quaternion q;           // [w, x, y, z]         quaternion container
 VectorInt16 aa;         // [x, y, z]            accel sensor measurements
+int16_t m[3];         // [x, y, z]            mag sensor measurements
 VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
 VectorInt16 aaWorld;    // [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    // [x, y, z]            gravity vector
@@ -322,19 +321,10 @@ void loop() {
             Serial.print("\t");
             Serial.print(ypr[1] * 180/M_PI);
             Serial.print("\t");
-            Serial.println(ypr[2] * 180/M_PI);
+            Serial.print(ypr[2] * 180/M_PI);
+            Serial.println("\t");
         #endif
 
-        #ifdef OUTPUT_RAW_ACCEL
-            // display real acceleration, adjusted to remove gravity
-            mpu.dmpGetAccel(&aa, fifoBuffer);
-            Serial.print("areal\t");
-            Serial.print(aa.x);
-            Serial.print("\t");
-            Serial.print(aa.y);
-            Serial.print("\t");
-            Serial.println(aa.z);
-        #endif
 
         #ifdef OUTPUT_READABLE_REALACCEL
             // display real acceleration, adjusted to remove gravity

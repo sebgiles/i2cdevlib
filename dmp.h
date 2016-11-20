@@ -37,7 +37,7 @@ THE SOFTWARE.
 #include "helper_3dmath.h"
 
 // MotionApps 4.1 DMP implementation, built using the MPU-9150 "MotionFit" board
-#define MPU9150_INCLUDE_DMP_MOTIONAPPS41
+#define MOTIONAPPS_41
 
 #include "mpu.h"
 
@@ -302,7 +302,7 @@ const unsigned char dmpConfig[MPU9150_DMP_CONFIG_SIZE] PROGMEM = {
     0x07,   0x67,   0x01,   0x9A,                     // ?
     0x07,   0x68,   0x04,   0xF1, 0x28, 0x30, 0x38,   // CFG_12 inv_send_accel -> inv_construct3_fifo
     0x07,   0x8D,   0x04,   0xF1, 0x28, 0x30, 0x38,   // ??? CFG_12 inv_send_mag -> inv_construct3_fifo
-    0x02,   0x16,   0x02,   0x00, 0x00                // D_0_22 inv_set_fifo_rate
+    0x02,   0x16,   0x02,   0x00, 0x01                // D_0_22 inv_set_fifo_rate
 
     // This very last 0x01 WAS a 0x09, which drops the FIFO rate down to 20 Hz. 0x07 is 25 Hz,
     // 0x01 is 100Hz. Going faster than 100Hz (0x00=200Hz) tends to result in very noisy data.
@@ -388,19 +388,19 @@ uint8_t MPU9150::dmpInitialize() {
     // enable MPU AUX I2C bypass mode
     //DEBUG_PRINTLN(F("Enabling AUX I2C bypass mode..."));
     //setI2CBypassEnabled(true);
-
+/* DONT TOUCH MY MAG!!!!!!!!!!!!!!!!!!!!!!!
     DEBUG_PRINTLN(F("Setting magnetometer mode to power-down..."));
     //mag -> setMode(0);
-    I2Cdev::writeByte(0x0E, 0x0A, 0x00);
+    I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x00);
 
     DEBUG_PRINTLN(F("Setting magnetometer mode to fuse access..."));
     //mag -> setMode(0x0F);
-    I2Cdev::writeByte(0x0E, 0x0A, 0x0F);
+    I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x0F);
 
     DEBUG_PRINTLN(F("Reading mag magnetometer factory calibration..."));
     int8_t asax, asay, asaz;
     //mag -> getAdjustment(&asax, &asay, &asaz);
-    I2Cdev::readBytes(0x0E, 0x10, 3, buffer);
+    I2Cdev::readBytes(MPU9150_RA_MAG_ADDRESS, 0x10, 3, buffer);
     asax = (int8_t)buffer[0];
     asay = (int8_t)buffer[1];
     asaz = (int8_t)buffer[2];
@@ -413,8 +413,8 @@ uint8_t MPU9150::dmpInitialize() {
 
     DEBUG_PRINTLN(F("Setting magnetometer mode to power-down..."));
     //mag -> setMode(0);
-    I2Cdev::writeByte(0x0E, 0x0A, 0x00);
-
+    I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x00);
+*/
     // load DMP code into memory banks
     DEBUG_PRINT(F("Writing DMP code to MPU memory banks ("));
     DEBUG_PRINT(MPU9150_DMP_CODE_SIZE);
@@ -512,20 +512,20 @@ uint8_t MPU9150::dmpInitialize() {
 
             DEBUG_PRINTLN(F("Setting zero-motion detection duration to 0..."));
             setZeroMotionDetectionDuration(0);
-
+/* DONT TOUCH THE MAG
             DEBUG_PRINTLN(F("Setting AK8975 to single measurement mode..."));
             //mag -> setMode(1);
-            I2Cdev::writeByte(0x0E, 0x0A, 0x01);
+            I2Cdev::writeByte(MPU9150_RA_MAG_ADDRESS, 0x0A, 0x01);
 
-            // setup AK8975 (0x0E) as Slave 0 in read mode
-            DEBUG_PRINTLN(F("Setting up AK8975 read slave 0..."));
+            // setup AK8975 (MPU9150_RA_MAG_ADDRESS) as Slave 0 in read mode
+            DEBUG_PRINTLN(F("Setting up AK8975 read slave 0..."));*/
             I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_ADDR, 0x8E);
             I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_REG,  0x01);
             I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV0_CTRL, 0xDA);
 
-            // setup AK8975 (0x0E) as Slave 2 in write mode
+            // setup AK8975 (MPU9150_RA_MAG_ADDRESS) as Slave 2 in write mode NOPE!
             DEBUG_PRINTLN(F("Setting up AK8975 write slave 2..."));
-            I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_ADDR, 0x0E);
+          //  I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_ADDR, MPU9150_RA_MAG_ADDRESS);
             I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_REG,  0x0A);
             I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_CTRL, 0x81);
             I2Cdev::writeByte(0x68, MPU9150_RA_I2C_SLV2_DO,   0x01);
@@ -750,14 +750,14 @@ uint8_t MPU9150::dmpGetGyro(int16_t *data, const uint8_t* packet) {
     data[2] = (packet[24] << 8) + packet[25];
     return 0;
 }
-uint8_t MPU9150::dmpGetMag(int16_t *data, const uint8_t* packet) {
+/*uint8_t MPU9150::dmpGetMag(int16_t *data, const uint8_t* packet) {
     // TODO: accommodate different arrangements of sent data (ONLY default supported now)
     if (packet == 0) packet = dmpPacketBuffer;
     data[0] = (packet[28] << 8) + packet[29];
     data[1] = (packet[30] << 8) + packet[31];
     data[2] = (packet[32] << 8) + packet[33];
     return 0;
-}
+}*/
 // uint8_t MPU9150::dmpSetLinearAccelFilterCoefficient(float coef);
 // uint8_t MPU9150::dmpGetLinearAccel(long *data, const uint8_t* packet);
 uint8_t MPU9150::dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity) {
@@ -849,4 +849,4 @@ uint16_t MPU9150::dmpGetFIFOPacketSize() {
     return dmpPacketSize;
 }
 
-#endif /* _DMP_H_ */
+#endif /* _MPU9150_9AXIS_MOTIONAPPS41_H_ */
