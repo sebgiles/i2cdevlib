@@ -30,8 +30,8 @@ THE SOFTWARE.
 ===============================================
 */
 
-#ifndef _MPU9150_9AXIS_MOTIONAPPS41_H_
-#define _MPU9150_9AXIS_MOTIONAPPS41_H_
+#ifndef _DMP_H_
+#define _DMP_H_
 
 #include "I2Cdev.h"
 #include "helper_3dmath.h"
@@ -39,7 +39,7 @@ THE SOFTWARE.
 // MotionApps 4.1 DMP implementation, built using the MPU-9150 "MotionFit" board
 #define MPU9150_INCLUDE_DMP_MOTIONAPPS41
 
-#include "MPU9150.h"
+#include "mpu.h"
 
 // Tom Carpenter's conditional PROGMEM code
 // http://forum.arduino.cc/index.php?topic=129407.0
@@ -849,4 +849,4 @@ uint16_t MPU9150::dmpGetFIFOPacketSize() {
     return dmpPacketSize;
 }
 
-#endif /* _MPU9150_9AXIS_MOTIONAPPS41_H_ */
+#endif /* _DMP_H_ */
